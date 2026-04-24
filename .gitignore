@@ -1,3 +1,27 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# LibreOffice lock files
+.~lock.*
+
+# Python history
+.python_history
+
+# pytest cache
+.pytest_cache/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
