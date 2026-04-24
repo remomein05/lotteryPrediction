@@ -17,6 +17,10 @@ ENV/
 # LibreOffice lock files
 .~lock.*
 
+# Ignore Excel workbooks and generated results
+*.xlsx
+result.md
+
 # Python history
 .python_history
 

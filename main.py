@@ -319,21 +319,17 @@ def main():
         if not valid_red_cells:
             print("No light-red highlighted cells were found; skipping Step 12-14.")
         else:
-            while True:
-                # Reset processing variables for this iterative choice
-                ft_ws = None
-                blue_matches_summary = []
-                unique_blue_values = []
-                
-                step12_coord = input("\nEnter the cell coordinate of a light-red highlighted cell (or type 'done' to finish): ").strip().upper()
-                if step12_coord == 'DONE' or step12_coord == 'EXIT' or not step12_coord:
-                    print("Exiting iterative processing.")
-                    break
+            # One-time prompt: read the user's choice once and process it (no iterative loop)
+            ft_ws = None
+            blue_matches_summary = []
+            unique_blue_values = []
 
-                if step12_coord not in valid_red_cells:
-                    print(f"Error: {step12_coord} is not in the red highlighted list. Please try again.")
-                    continue
-
+            step12_coord = input("\nEnter the cell coordinate of a light-red highlighted cell (or type 'done' to finish): ").strip().upper()
+            if step12_coord == 'DONE' or step12_coord == 'EXIT' or not step12_coord:
+                print("Exiting iterative processing.")
+            elif step12_coord not in valid_red_cells:
+                print(f"Error: {step12_coord} is not in the red highlighted list. Skipping iterative processing.")
+            else:
                 step12_val = valid_red_cells[step12_coord]
                 print(f"Selected red highlighted cell {step12_coord} with value {step12_val}.")
 
@@ -345,6 +341,84 @@ def main():
                 time.sleep(1)
 
                 # --- STEP 13: Search and Highlight Neighbours in family_tree.xlsx ---
+            # --- STEP 12: Select Red Highlighted Cell and Generate Neighbours ---
+            print("\n--- Step 12: Select Red Highlighted Cell and Generate Neighbours ---")
+            valid_red_cells = {coord: val for coord, val in red_matches_summary}
+
+            if not valid_red_cells:
+                print("No light-red highlighted cells were found; skipping Step 12-14.")
+            else:
+                # Try automatic selection: pick the first red cell that has exactly 12 permutations
+                # and is not from the same day (block origin row) as the originally selected yellow cell.
+                ft_ws = None
+                blue_matches_summary = []
+                unique_blue_values = []
+
+                # Prompt the user first. If they provide a selection, honor it (after same-day validation).
+                step12_coord = input("\nEnter the cell coordinate of a light-red highlighted cell (or type 'done' to finish): ").strip().upper()
+                user_provided = not (step12_coord == 'DONE' or step12_coord == 'EXIT' or not step12_coord)
+
+                step12_val = None
+                process_step12 = False
+
+                if user_provided:
+                    if step12_coord not in valid_red_cells:
+                        print(f"Error: {step12_coord} is not in the red highlighted list. Will attempt auto-selection.")
+                    else:
+                        # Validate same-day constraint for user selection
+                        try:
+                            rc_cell = cast(Any, ws)[step12_coord]
+                            r_start_row, r_start_col = get_block_origin(ws, int(rc_cell.row), int(rc_cell.column))
+                            if r_start_row == target_os_row:
+                                print("Selected red cell is from the same day as the yellow cell. Will attempt auto-selection.")
+                            else:
+                                step12_val = valid_red_cells[step12_coord]
+                                process_step12 = True
+                                print(f"User-selected red highlighted cell {step12_coord} with value {step12_val}.")
+                        except Exception as e:
+                            print(f"Error validating selected red cell {step12_coord}: {e}. Will attempt auto-selection.")
+
+                if not process_step12:
+                    # Auto-selection fallback: choose from bottom-up.
+                    auto_selected = False
+                    # First pass: prefer cells with exactly 12 permutations
+                    for prefer_12 in (True, False):
+                        for coord, val in reversed(red_matches_summary):
+                            try:
+                                rc_cell = cast(Any, ws)[coord]
+                            except Exception:
+                                continue
+                            try:
+                                r_start_row, r_start_col = get_block_origin(ws, int(rc_cell.row), int(rc_cell.column))
+                            except Exception:
+                                continue
+                            if r_start_row == target_os_row:
+                                continue
+                            perms = calculate_permutations(str(val))
+                            if prefer_12 and perms == 12:
+                                step12_coord = coord
+                                step12_val = str(val)
+                                auto_selected = True
+                                break
+                            if not prefer_12 and perms != 12:
+                                step12_coord = coord
+                                step12_val = str(val)
+                                auto_selected = True
+                                break
+                        if auto_selected:
+                            print(f"Auto-selected red cell {step12_coord} with value {step12_val} (bottom-up, prefer_12={prefer_12}).")
+                            process_step12 = True
+                            break
+
+                if process_step12 and step12_val is not None:
+                    step12_neighbours = get_neighbours(step12_val)
+                    print(f"Neighbours for {step12_val}: {', '.join(step12_neighbours)}")
+
+                    # Close podium_highlighted.xlsx after selection
+                    close_file("podium_highlighted.xlsx")
+                    time.sleep(1)
+
+                    # --- STEP 13: Search and Highlight Neighbours in family_tree.xlsx ---
                 print("\n--- Step 13: Searching and Highlighting Neighbours in family_tree.xlsx ---")
                 family_tree_filename = os.path.join(_script_dir, "family_tree.xlsx")
                 family_tree_output_filename = os.path.join(_script_dir, "family_tree_highlighted.xlsx")
@@ -506,9 +580,15 @@ def main():
                         else:
                             print("Error: workbook object is missing, cannot save next_podiums.xlsx")
 
-                        print("Done! Automatically opening the generated file...")
-                        open_file(next_podiums_filename)
-                        open_file(output_filename)
+                        print("Done! Attempting to open the generated files...")
+                        abs_next = os.path.abspath(next_podiums_filename)
+                        opened_next = open_file(abs_next)
+                        if not opened_next:
+                            print(f"Note: Could not open '{abs_next}' automatically. You can open it manually.")
+                        abs_out = os.path.abspath(output_filename)
+                        opened_out = open_file(abs_out)
+                        if not opened_out:
+                            print(f"Note: Could not open '{abs_out}' automatically. You can open it manually.")
                         
                         if purple_matches_summary:
                             print("\n--- Four Colour Highlight Results ---")
@@ -528,7 +608,6 @@ def main():
                         print(f"{idx+1}. {colored_val}")
 
                 print("\n'next_podiums.xlsx' and updated 'podium_highlighted.xlsx' are now open for your review.")
-                print("You may now select another light-red cell or type 'done' to exit.")
 
         break
 
