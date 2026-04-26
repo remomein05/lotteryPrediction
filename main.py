@@ -312,36 +312,7 @@ def main():
             for coord, val in red_matches_summary:
                 print(f"Cell {coord}: {val}")
 
-        # --- STEP 12: Validate red-highlighted cell and generate its Neighbours (Iterative Loop) ---
-        print("\n--- Step 12: Select Red Highlighted Cell and Generate Neighbours ---")
-        valid_red_cells = {coord: val for coord, val in red_matches_summary}
-
-        if not valid_red_cells:
-            print("No light-red highlighted cells were found; skipping Step 12-14.")
-        else:
-            # One-time prompt: read the user's choice once and process it (no iterative loop)
-            ft_ws = None
-            blue_matches_summary = []
-            unique_blue_values = []
-
-            step12_coord = input("\nEnter the cell coordinate of a light-red highlighted cell (or type 'done' to finish): ").strip().upper()
-            if step12_coord == 'DONE' or step12_coord == 'EXIT' or not step12_coord:
-                print("Exiting iterative processing.")
-            elif step12_coord not in valid_red_cells:
-                print(f"Error: {step12_coord} is not in the red highlighted list. Skipping iterative processing.")
-            else:
-                step12_val = valid_red_cells[step12_coord]
-                print(f"Selected red highlighted cell {step12_coord} with value {step12_val}.")
-
-                step12_neighbours = get_neighbours(step12_val)
-                print(f"Neighbours for {step12_val}: {', '.join(step12_neighbours)}")
-
-                # Close podium_highlighted.xlsx after user input
-                close_file("podium_highlighted.xlsx")
-                time.sleep(1)
-
-                # --- STEP 13: Search and Highlight Neighbours in family_tree.xlsx ---
-            # --- STEP 12: Select Red Highlighted Cell and Generate Neighbours ---
+        # --- STEP 12: Select Red Highlighted Cell and Generate Neighbours ---
             print("\n--- Step 12: Select Red Highlighted Cell and Generate Neighbours ---")
             valid_red_cells = {coord: val for coord, val in red_matches_summary}
 
