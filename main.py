@@ -379,36 +379,8 @@ def main():
                             print(f"Error validating selected red cell {step12_coord}: {e}. Will attempt auto-selection.")
 
                 if not process_step12:
-                    # Auto-selection fallback: choose from bottom-up.
-                    auto_selected = False
-                    # First pass: prefer cells with exactly 12 permutations
-                    for prefer_12 in (True, False):
-                        for coord, val in reversed(red_matches_summary):
-                            try:
-                                rc_cell = cast(Any, ws)[coord]
-                            except Exception:
-                                continue
-                            try:
-                                r_start_row, r_start_col = get_block_origin(ws, int(rc_cell.row), int(rc_cell.column))
-                            except Exception:
-                                continue
-                            if r_start_row == target_os_row:
-                                continue
-                            perms = calculate_permutations(str(val))
-                            if prefer_12 and perms == 12:
-                                step12_coord = coord
-                                step12_val = str(val)
-                                auto_selected = True
-                                break
-                            if not prefer_12 and perms != 12:
-                                step12_coord = coord
-                                step12_val = str(val)
-                                auto_selected = True
-                                break
-                        if auto_selected:
-                            print(f"Auto-selected red cell {step12_coord} with value {step12_val} (bottom-up, prefer_12={prefer_12}).")
-                            process_step12 = True
-                            break
+                    # Auto-selection disabled: require explicit user selection.
+                    print("No valid red-cell selection provided; auto-selection is disabled. Skipping Step 12 iterative processing.")
 
                 if process_step12 and step12_val is not None:
                     step12_neighbours = get_neighbours(step12_val)
