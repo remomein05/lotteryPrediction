@@ -19,6 +19,7 @@ ENV/
 
 # Ignore Excel workbooks and generated results
 *.xlsx
+!podium.xlsx
 result.md
 
 # Python history
