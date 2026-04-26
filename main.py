@@ -369,7 +369,7 @@ def main():
                         try:
                             rc_cell = cast(Any, ws)[step12_coord]
                             r_start_row, r_start_col = get_block_origin(ws, int(rc_cell.row), int(rc_cell.column))
-                            if r_start_row == target_os_row:
+                            if r_start_row == target_os_row and r_start_col == target_os_col:
                                 print("Selected red cell is from the same day as the yellow cell. Will attempt auto-selection.")
                             else:
                                 step12_val = valid_red_cells[step12_coord]
