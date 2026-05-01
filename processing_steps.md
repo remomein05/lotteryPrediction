@@ -94,12 +94,13 @@ From the validated input **B**, the script calculates its 7 remaining "Block" me
 - Any cell coordinate values fulfilling these rules are highlighted in **light red** (`#FFFF9999`).
 - Once complete, the resulting structural dataset is saved into `podium_highlighted.xlsx`.
 
-## Step 12: Validate Red-Highlighted Cell and Generate Neighbours (Interactive Loop)
+## Step 12: Validate Red-Highlighted Cell and Generate Neighbours
 - The script prompts the user to input a cell coordinate from the light-red highlighted cells in `podium_highlighted.xlsx`.
-- **Iterative Process**: After inputting a valid coordinate, the script closes `podium_highlighted.xlsx`, processes everything through to Step 14, then re-opens `next_podiums.xlsx` and the updated `podium_highlighted.xlsx` for review.
-- Once Step 14 concludes, the script returns to the Step 12 prompt. This allows the user to select another red-highlighted cell and see new results without restarting the entire script.
-- The user can type "done" or "exit" at the Step 12 prompt to finish the script once they are satisfied with the results.
-- The generated Neighbours for the selected red cell are printed in the terminal as before.
+- **Validation**: The entered coordinate must exist in the red-highlighted results list. If invalid, the script prints an error and skips to the end.
+- **Same-Day Constraint**: The selected red cell must **not** belong to the same draw block (same block origin row and column) as the yellow-highlighted cell selected in Step 5. If it does, the selection is rejected.
+- **No Auto-Selection**: If no valid user selection is provided (or the user types "done" / "exit"), the script skips Steps 12–14 entirely. There is no automatic fallback selection.
+- Once a valid red cell is selected, its Neighbours are generated and printed in the terminal.
+- The `podium_highlighted.xlsx` Excel window is **automatically closed** after a valid selection is accepted.
 
 ## Step 13: Search and Highlight Neighbours in family_tree.xlsx
 - The script loads `family_tree.xlsx` (data range: C3 to Y46).
@@ -125,7 +126,9 @@ From the validated input **B**, the script calculates its 7 remaining "Block" me
 - Matched cells for each unique blue number are highlighted with a dedicated color:
   - 1st unique blue number: `#f2dceb`
   - 2nd unique blue number: `#79d0f2`
-  - 3rd unique blue number: `#6f98b8`
+  - 3rd unique blue number: `#357826`
   - 4th unique blue number: `#b0c8e9`
 - The updated file is saved as a new file named `next_podiums.xlsx` and opened automatically.
 - A summary of all color-coded highlighted matches is printed in the terminal.
+- **Final Summary**: After Step 14 completes, a "Final Unique Blue Value → Color Mapping" table is printed, showing each unique blue value alongside its assigned color (rendered with terminal color codes for easy visual reference).
+- Both `next_podiums.xlsx` and `podium_highlighted.xlsx` are opened for the user's review.
