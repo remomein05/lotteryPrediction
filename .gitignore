@@ -13,7 +13,6 @@ result.md
 
 # Virtual Environments
 venv/
-family_tree.xlsx
 .gitignore
 historical_highlight.xlsx
 __pycache__/main.cpython-314.pyc
