@@ -58,7 +58,7 @@ python main.py
 
 - **Step 11 — Secondary Cross-Dataset Highlighting:** The filtered neighbours are searched across columns D–R of `podium.xlsx` and matches are highlighted in **light red** only when they occur strictly "before" the selected block (above or left-in-same-row) and within the same company. Magnum and Singapore are treated as a partnership for matching.
 
-- **Step 12 — Iterative Red-Cell Processing:** You may select any light-red highlighted cell; the script will generate neighbours for that selection, process Steps 13–14, then re-open `next_podiums.xlsx` and the updated `podium_highlighted.xlsx` so you can repeat without restarting.
+- **Step 12 — Red-Cell Selection:** Enter the coordinate of one light-red highlighted cell. The selected cell must **not** belong to the same draw block as the Step 5 yellow cell (same-day constraint). Typing `done` or `exit` skips Steps 12–14 entirely. There is no auto-selection fallback. Once accepted, the script generates neighbours for that cell and closes `podium_highlighted.xlsx`.
 
 - **Step 13 — family_tree.xlsx Search (optional):** If `family_tree.xlsx` exists, the script locates the Step 5 value (grey), identifies columns containing it, then searches only those columns for neighbours of the Step 12 red cell (highlighting matches in **light blue**). Results are saved as `family_tree_highlighted.xlsx`.
 
