@@ -135,11 +135,7 @@ def process_backtest():
                 if cell.value is not None and str(cell.value).strip() != "":
                     val_str = str(cell.value).strip().zfill(4)
                     if val_str in pool:
-                        # Check company filter
-                        m_start_row, m_start_col = get_block_origin(pd_ws, row_index, col_idx)
-                        m_offset = int(row_index) - int(m_start_row)
-                        if (m_offset == target_offset) or ({m_offset, target_offset} == {0, 5}):
-                            hits.append(val_str)
+                        hits.append(val_str)
             return hits
 
         # Day N
